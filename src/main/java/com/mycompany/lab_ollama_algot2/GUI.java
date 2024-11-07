@@ -1,5 +1,6 @@
 package com.mycompany.lab_ollama_algot2;
 
+import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -17,13 +18,31 @@ public class GUI extends javax.swing.JFrame {
     String nombremodelo = "gemma2:2b";
     String chats2[] = new String[1000];
     String datos[][] = new String[1000][2];
-    
+   
      private static final String DB_URL = "jdbc:sqlite:chatbot.db";
       
     public GUI() {
         initComponents();
         //setIconImage(new ImageIcon(getClass().getResource("/ai.png")).getImage());
     }
+    
+    private void prompt(){
+         String texto = prompt.getText() + "\n";
+        if (!texto.trim().isEmpty()) {
+            output.append("Usuario: " + texto + "\n");
+            // Agrega el texto del usuario
+
+            String entrada = prompt.getText();
+            String milagro = (ollama(nombremodelo, entrada) + "\n");
+
+            output.append(" Respuesta: " + milagro + "\n");
+            prompt.setText("");
+
+            //historial.add(new String[]{entrada, milagro});
+        }
+    }
+    
+    
     public void rescatavectorinador (String v[]){
        String v2[]= new String [v.length]; 
        
@@ -63,6 +82,11 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        jScrollPane1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jScrollPane1KeyPressed(evt);
+            }
+        });
         jScrollPane1.setViewportView(prompt);
 
         output.setEditable(false);
@@ -98,24 +122,25 @@ public class GUI extends javax.swing.JFrame {
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 70, Short.MAX_VALUE)
-                .addGap(18, 18, 18)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(terminar, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                        .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
-                        .addGap(12, 12, 12)
-                        .addComponent(btn_prompt, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addGap(21, 21, 21))
             .addGroup(layout.createSequentialGroup()
-                .addContainerGap()
-                .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(202, 202, 202)
-                .addComponent(jLabel1)
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 70, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(18, 18, 18)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 590, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(terminar, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 434, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(12, 12, 12)
+                                .addComponent(btn_prompt, javax.swing.GroupLayout.PREFERRED_SIZE, 66, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addContainerGap()
+                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 77, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addGap(244, 244, 244)
+                        .addComponent(jLabel1)))
+                .addContainerGap(21, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -141,26 +166,13 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_promptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_promptMouseClicked
-        String texto = prompt.getText() + "\n";
-        if (!texto.trim().isEmpty()) {
-            output.append("Usuario: " + texto + "\n");
-            // Agrega el texto del usuario
-
-            String entrada = prompt.getText();
-            String milagro = (ollama(nombremodelo, entrada) + "\n");
-
-            System.out.println(milagro);
-            output.append(" Respuesta: " + milagro + "\n");
-            prompt.setText("");
-
-            //historial.add(new String[]{entrada, milagro});
-        }
+       prompt();
 
         /*for (String[] intercambio : historial) {
             System.out.println("Pregunta: " + intercambio[0] + "\n"+ intercambio[1]);
         }*/
         
-       int hola=24;
+       
     }//GEN-LAST:event_btn_promptMouseClicked
 
     private void chatsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chatsMouseClicked
@@ -214,6 +226,19 @@ public class GUI extends javax.swing.JFrame {
         
         
     }//GEN-LAST:event_terminarMouseClicked
+
+    private void jScrollPane1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jScrollPane1KeyPressed
+         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+        if (evt.isShiftDown()) {
+            // Shift + Enter: Inserta un salto de línea
+            output.append("\n");
+        } else {
+            // Enter: Envía el prompt
+            evt.consume(); // Previene el salto de línea
+            prompt();
+        }
+    }
+    }//GEN-LAST:event_jScrollPane1KeyPressed
 
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
