@@ -10,6 +10,7 @@ public class Lab_ollama_algot2 {
         
        //mensajito
     //esta es una prueba para los comentarios -miguel
+    //mensaje epico -samuel
     }
         
  
