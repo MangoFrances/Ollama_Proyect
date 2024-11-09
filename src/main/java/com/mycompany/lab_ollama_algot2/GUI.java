@@ -18,37 +18,35 @@ public class GUI extends javax.swing.JFrame {
     String nombremodelo = "gemma2:2b";
     String chats2[] = new String[1000];
     String datos[][] = new String[1000][2];
-    GUI2 historial =new GUI2 ();
-    
-     private static final String DB_URL = "jdbc:sqlite:chatbot.db";
-      
+    GUI2 historial = new GUI2();
+
+    private static final String DB_URL = "jdbc:sqlite:chatbot.db";
+
     public GUI() {
         initComponents();
-        
+
     }
-    
-    private void prompt(){
-         String texto = prompt.getText() + "\n";
+
+    private void prompt() {
+        String texto = prompt.getText() + "\n";
         if (!texto.trim().isEmpty()) {
             output.append("Usuario: " + texto + "\n");
             // Agrega el texto del usuario
 
             String entrada = prompt.getText();
             String milagro = (ollama(nombremodelo, entrada) + "\n");
-            
+
             output.append(" Respuesta: " + milagro + "\n");
             prompt.setText("");
 
             //historial.add(new String[]{entrada, milagro});
         }
     }
-    
-    
-    public void rescatavectorinador (String v[]){
-       String v2[]= new String [v.length]; 
-       
-       // dokckpedkpokefpovoj fiovjiojio
-       
+
+    public void rescatavectorinador(String v[]) {
+        String v2[] = new String[v.length];
+
+        // dokckpedkpokefpovoj fiovjiojio
     }
 
     @SuppressWarnings("unchecked")
@@ -222,19 +220,17 @@ public class GUI extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btn_promptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_promptMouseClicked
-       prompt();
+        prompt();
 
         /*for (String[] intercambio : historial) {
             System.out.println("Pregunta: " + intercambio[0] + "\n"+ intercambio[1]);
         }*/
-        
-       
+
     }//GEN-LAST:event_btn_promptMouseClicked
 
     private void chatsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chatsMouseClicked
-        
-            
-        
+
+
     }//GEN-LAST:event_chatsMouseClicked
 
     private void terminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_terminarActionPerformed
@@ -246,24 +242,24 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_promptActionPerformed
 
     private void terminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_terminarMouseClicked
-         String churro = output.getText();
-        int i=0;
-          chats2[i]=churro; 
-            i++;
-        
+        String churro = output.getText();
+        int i = 0;
+        chats2[i] = churro;
+        i++;
+
         String name = JOptionPane.showInputDialog("Ingese nombre del nuevo chat", JOptionPane.INFORMATION_MESSAGE);
         boolean vacio = false;
         boolean vacio2 = false;
-        boolean nada =true ;
+        boolean nada = true;
         int index;
-        for ( i = 0; i < 1000; i++) {
+        for (i = 0; i < 1000; i++) {
             if (chats2[i] == null) {
                 chats2[i] = name;
                 vacio = true;
                 index = 1;
                 break;
             }
-            if(datos[i][0] == null){
+            if (datos[i][0] == null) {
                 datos[i][0] = name;
                 vacio2 = true;
                 break;
@@ -272,38 +268,33 @@ public class GUI extends javax.swing.JFrame {
         if (vacio) {
             chats.setListData(chats2);
         } else {
-           nada = false;
+            nada = false;
             JOptionPane.showMessageDialog(null, "No creado, ingrese nombre del chat (1 palabra)", "Información", JOptionPane.WARNING_MESSAGE);
         }
-     if (nada){
-         output.setText("");
-     }
-        
-        
-        
-        
-        
-        
-        
+        if (nada) {
+            output.setText("");
+        }
+
+
     }//GEN-LAST:event_terminarMouseClicked
 
     private void jScrollPane1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jScrollPane1KeyPressed
-         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
-        if (evt.isShiftDown()) {
-            // Shift + Enter: Inserta un salto de línea
-            output.append("\n");
-        } else {
-            // Enter: Envía el prompt
-            evt.consume(); // Previene el salto de línea
-            prompt();
+        if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
+            if (evt.isShiftDown()) {
+                // Shift + Enter: Inserta un salto de línea
+                output.append("\n");
+            } else {
+                // Enter: Envía el prompt
+                evt.consume(); // Previene el salto de línea
+                prompt();
+            }
         }
-    }
     }//GEN-LAST:event_jScrollPane1KeyPressed
 
     private void btnhistorialMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnhistorialMouseClicked
         historial.setVisible(true);
-     
-        
+
+
     }//GEN-LAST:event_btnhistorialMouseClicked
 
     private void btnhistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnhistorialActionPerformed
@@ -339,7 +330,7 @@ public class GUI extends javax.swing.JFrame {
         java.awt.EventQueue.invokeLater(new Runnable() {
             public void run() {
                 new GUI().setVisible(true);
-            }   
+            }
         });
     }
 
@@ -379,8 +370,9 @@ public static String ollama(String nombremodelo, String promptText) {
 
             // Obtener el código de respuesta
             int code = conn.getResponseCode();
-            if (code == 404) {
-                return "Error 404: El recurso solicitado no fue encontrado. Verifica el endpoint y el servidor.";
+            String errorMessage = errorHandler(code);
+            if (errorMessage != null) {
+                return errorMessage;
             } else {
                 BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                 StringBuilder response = new StringBuilder();
@@ -405,5 +397,24 @@ public static String ollama(String nombremodelo, String promptText) {
         }
     }
 
+    private static String errorHandler(int code) {
+        switch (code) {
+            case 400:
+                return "Error 400: Solicitud incorrecta. Verifica los datos enviados.";
+            case 401:
+                return "Error 401: No autorizado. Verifica tus credenciales de autenticación.";
+            case 403:
+                return "Error 403: Prohibido. No tienes permiso para acceder a este recurso.";
+            case 404:
+                return "Error 404: El recurso solicitado no fue encontrado. Verifica el endpoint y el servidor.";
+            case 500:
+                return "Error 500: Error interno del servidor. Intenta nuevamente más tarde.";
+            case 503:
+                return "Error 503: Servicio no disponible. El servidor podría estar en mantenimiento.";
+            // Añade más casos según sea necesario
+            default:
+                return null; // No hay error conocido, la solicitud fue exitosa
+        }
+    }
 
 }
