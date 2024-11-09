@@ -8,7 +8,7 @@ public class Lab_ollama_algot2 {
         frame.setSize(716, 750);
          
         
-       // frame.setSize(900, 700);
+       //mensajito
     
     }
         
