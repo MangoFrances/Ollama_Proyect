@@ -300,7 +300,35 @@ if (guardado) {
 
 
     }//GEN-LAST:event_btnhistorialMouseClicked
+private void btnborrarActionPerformed(java.awt.event.ActionEvent evt) {                                          
+        // TODO add your handling code here:
+    }                                         
 
+    private void btnborrarMouseClicked(java.awt.event.MouseEvent evt) {                                       
+        output.setText("");
+    }                                      
+
+    private void btneliminarMouseClicked(java.awt.event.MouseEvent evt) {                                         
+        int index = chats.getSelectedIndex();
+
+        if (index != -1 && chats2[index] != null) {
+
+            for (int i = index; i < chats2.length - 1; i++) {
+                chats2[i] = chats2[i + 1];
+            }
+            chats2[chats2.length - 1] = null;
+
+            chats.setListData(chats2);
+            JOptionPane.showMessageDialog(null, "Chat eliminado exitosamente.", "Información", JOptionPane.INFORMATION_MESSAGE);
+        } else {
+            JOptionPane.showMessageDialog(null, "Seleccione un chat válido para eliminar.", "Error", JOptionPane.ERROR_MESSAGE);
+        }
+
+    }                                        
+
+    private void btneliminarActionPerformed(java.awt.event.ActionEvent evt) {                                            
+        // TODO add your handling code here:
+    }      
     private void btnhistorialActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnhistorialActionPerformed
         this.dispose();
         historial.setVisible(true);
