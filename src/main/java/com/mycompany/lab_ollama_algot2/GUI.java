@@ -10,6 +10,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
+import java.util.ArrayList;
 import java.util.HashSet;
 import javax.swing.JOptionPane;
 import org.json.JSONObject;
@@ -17,16 +18,18 @@ import org.json.JSONObject;
 public class GUI extends javax.swing.JFrame {
 
     String nombremodelo = "gemma2:2b";
-    String chats2[] = new String[1000];
-    String datos[][] = new String[1000][2];
-    public static String[] chatActual = new String[30];
+    String chats2[] = new String[20];
 
+    ArrayList<ArrayList<String>> datos = new ArrayList<>(20);
     GUI2 historial = new GUI2();
 
     private static final String DB_URL = "jdbc:sqlite:chatbot.db";
 
     public GUI() {
         initComponents();
+        for (int i = 0; i < 20; i++) {
+            datos.add(new ArrayList<>());
+        }
         jScrollPane1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
                 jScrollPane1KeyPressed(evt);
@@ -36,26 +39,32 @@ public class GUI extends javax.swing.JFrame {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    prompt();  // Vaciar el JTextField solo si se presiona Enter
+                    prompt();
                 }
             }
         });
     }
 
     private void prompt() {
-        String texto = prompt.getText() + "\n";
+        String texto = prompt.getText();
         if (!texto.trim().isEmpty()) {
             output.append("Usuario: " + texto + "\n");
-            // Agrega el texto del usuario
 
             String entrada = prompt.getText();
             String milagro = (ollama(nombremodelo, entrada) + "\n");
 
-            output.append(" Respuesta: " + milagro + "\n");
+            output.append("Respuesta: " + milagro + "\n");
             prompt.setText("");
 
-            //historial.add(new String[]{entrada, milagro});
+            int index = chats.getSelectedIndex();
+            if (index != -1) {
+                datos.get(index).add("Usuario: " + entrada);
+                datos.get(index).add("Respuesta: " + milagro);
+                 System.out.println("Mensajes almacenados en el chat " + index + ": " + datos.get(index));//Prueba ddebug
+            }
         }
+        
+        
     }
 
     public void rescatavectorinador(String v[]) {
@@ -167,13 +176,12 @@ public class GUI extends javax.swing.JFrame {
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                .addContainerGap()
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnborrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                    .addComponent(btn_prompt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                    .addComponent(btn_prompt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 0, Short.MAX_VALUE)
+                .addGap(0, 4, Short.MAX_VALUE)
                 .addComponent(btnhistorial))
         );
         jPanel1Layout.setVerticalGroup(
@@ -226,7 +234,7 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(btneliminar)
                         .addGap(248, 248, 248)
                         .addComponent(jLabel3)
-                        .addGap(0, 262, Short.MAX_VALUE)))
+                        .addGap(0, 263, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -260,28 +268,28 @@ public class GUI extends javax.swing.JFrame {
     private void btn_promptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_promptMouseClicked
         prompt();
 
-        /*for (String[] intercambio : historial) {
-            System.out.println("Pregunta: " + intercambio[0] + "\n"+ intercambio[1]);
-        }*/
+        
 
     }//GEN-LAST:event_btn_promptMouseClicked
 
     private void chatsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chatsMouseClicked
-
-        //Chismoso por aqui
         int index = chats.getSelectedIndex();
         if (index != -1) {
-            output.setText("");
-            historial.setChatActual(index);
+            output.setText(""); 
 
-            StringBuilder conversation = new StringBuilder();
-            for (String mensaje : historial.chatActual) {
-                if (mensaje != null) {
-                    conversation.append(mensaje).append("\n");
-                }
+            // Obtiene el historial completo del chat seleccionado desde `datos`
+            ArrayList<String> conversation = datos.get(index);
+
+            System.out.println("Contenido de conversation para el chat " + index + ": " + conversation);//Prueba ddebug
+            StringBuilder conversationText = new StringBuilder();
+            for (String mensaje : conversation) {
+                conversationText.append(mensaje).append("\n");
             }
-            output.setText(conversation.toString());
+
+           
+            output.setText(conversationText.toString());
         }
+
     }//GEN-LAST:event_chatsMouseClicked
 
     private void terminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_terminarActionPerformed
@@ -293,7 +301,6 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_promptActionPerformed
 
     private void terminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_terminarMouseClicked
-
         int i = 0;
         while (i < chats2.length && chats2[i] != null) {
             i++;
@@ -307,27 +314,29 @@ public class GUI extends javax.swing.JFrame {
 
         boolean guardado = false;
 
+        // Encuentra una posición vacía en `chats2` para el nuevo chat
         for (i = 0; i < chats2.length; i++) {
             if (chats2[i] == null) {
                 chats2[i] = name;
                 guardado = true;
-                break;
-            }
-        }
 
-        for (i = 0; i < datos.length; i++) {
-            if (datos[i][0] == null) {
-                datos[i][0] = name;
+                // Asegúrate de que `datos` tenga una lista para este nuevo chat
+                // Si `datos` ya tiene listas adicionales, usa la que corresponde al índice, de lo contrario, agrega una nueva
+                if (i < datos.size()) {
+                    datos.set(i, new ArrayList<>());
+                } else {
+                    datos.add(new ArrayList<>());
+                }
+
                 break;
             }
         }
 
         if (guardado) {
-            chats.setListData(chats2);
+            chats.setListData(chats2);  // Actualiza la lista de chats visibles
         } else {
-            JOptionPane.showMessageDialog(null, "No creado, ingrese nombre del chat (1 palabra)", "Información", JOptionPane.WARNING_MESSAGE);
+            JOptionPane.showMessageDialog(null, "No se pudo crear el chat. Verifique el nombre.", "Información", JOptionPane.WARNING_MESSAGE);
         }
-
     }//GEN-LAST:event_terminarMouseClicked
 
     private void jScrollPane1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jScrollPane1KeyPressed
@@ -337,8 +346,8 @@ public class GUI extends javax.swing.JFrame {
                 // Shift + Enter: Inserta un salto de línea en el prompt
                 prompt.setText(prompt.getText() + "\n");
             } else {
-                // Enter: Envía el prompt
-                evt.consume(); // Previene el salto de línea
+
+                evt.consume();
                 prompt();
             }
         }
@@ -504,21 +513,11 @@ public static String ollama(String nombremodelo, String promptText) {
         return chats2.clone();
     }
 
-    public String[][] getDatos() {
-        String[][] datosCopy = new String[datos.length][];
-        for (int i = 0; i < datos.length; i++) {
-            datosCopy[i] = datos[i].clone();
-        }
-        return datosCopy;
-    }
-
     private String getConversation(String chatName) {
         int index = findChatIndexByName(chatName);
         if (index != -1) {
-            historial.setChatActual(index);
-
             StringBuilder conversation = new StringBuilder();
-            for (String mensaje : historial.chatActual) {
+            for (String mensaje : datos.get(index)) { // Itera sobre los mensajes del chat seleccionado
                 if (mensaje != null) {
                     conversation.append(mensaje).append("\n");
                 }
@@ -529,9 +528,8 @@ public static String ollama(String nombremodelo, String promptText) {
     }
 
     private int findChatIndexByName(String chatName) {
-        String[] chatNames = historial.getNameshistorial();
-        for (int i = 0; i < chatNames.length; i++) {
-            if (chatName.equals(chatNames[i])) {
+        for (int i = 0; i < chats2.length; i++) { // Busca el índice en `chats2` que corresponde al nombre del chat
+            if (chatName.equals(chats2[i])) {
                 return i;
             }
         }
