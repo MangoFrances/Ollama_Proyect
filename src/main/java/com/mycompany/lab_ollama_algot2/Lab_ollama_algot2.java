@@ -5,7 +5,7 @@ public class Lab_ollama_algot2 {
     public static void main(String[] args) {        
         GUI frame= new GUI();
         frame.setVisible(true);
-        frame.setSize(716, 750);
+        frame.setSize(716, 765);
          
         
        //mensajito

@@ -51,7 +51,7 @@ public class GUI2 extends javax.swing.JFrame {
         jScrollPane2.setViewportView(chats);
 
         btnregresar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/down-left.png"))); // NOI18N
-        btnregresar.setText("Regresar");
+        btnregresar.setText("Cerrar Ventana");
         btnregresar.addMouseListener(new java.awt.event.MouseAdapter() {
             public void mouseClicked(java.awt.event.MouseEvent evt) {
                 btnregresarMouseClicked(evt);
@@ -79,10 +79,10 @@ public class GUI2 extends javax.swing.JFrame {
                             .addGroup(layout.createSequentialGroup()
                                 .addGap(88, 88, 88)
                                 .addComponent(jLabel1)))
-                        .addGap(0, 0, Short.MAX_VALUE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(250, 250, 250)
-                        .addComponent(btnregresar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
+                        .addGap(0, 136, Short.MAX_VALUE))
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                        .addComponent(btnregresar)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -111,8 +111,6 @@ public class GUI2 extends javax.swing.JFrame {
 
     private void btnregresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnregresarActionPerformed
         this.dispose();
-        GUI g = new GUI();
-        g.setVisible(true);
     }//GEN-LAST:event_btnregresarActionPerformed
 
     private void btnregresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnregresarMouseClicked
@@ -158,7 +156,7 @@ public class GUI2 extends javax.swing.JFrame {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton btnregresar;
-    private javax.swing.JList<String> chats;
+    public javax.swing.JList<String> chats;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JScrollPane jScrollPane2;
     private javax.swing.JTextArea output2;
