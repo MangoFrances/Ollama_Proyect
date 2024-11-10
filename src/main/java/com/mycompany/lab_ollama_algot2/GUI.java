@@ -1,5 +1,6 @@
 package com.mycompany.lab_ollama_algot2;
 
+import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -24,7 +25,19 @@ public class GUI extends javax.swing.JFrame {
 
     public GUI() {
         initComponents();
-
+        jScrollPane1.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyPressed(java.awt.event.KeyEvent evt) {
+                jScrollPane1KeyPressed(evt);
+            }
+        });
+        prompt.addKeyListener(new KeyAdapter() {
+            @Override
+            public void keyPressed(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_ENTER) {
+                    prompt();  // Vaciar el JTextField solo si se presiona Enter
+                }
+            }
+        });
     }
 
     private void prompt() {
@@ -54,7 +67,6 @@ public class GUI extends javax.swing.JFrame {
     private void initComponents() {
 
         jLabel1 = new javax.swing.JLabel();
-        btn_prompt = new javax.swing.JButton();
         jScrollPane1 = new javax.swing.JScrollPane();
         prompt = new javax.swing.JTextPane();
         jScrollPane4 = new javax.swing.JScrollPane();
@@ -62,32 +74,19 @@ public class GUI extends javax.swing.JFrame {
         jScrollPane2 = new javax.swing.JScrollPane();
         chats = new javax.swing.JList<>();
         terminar = new javax.swing.JButton();
-        jLabel4 = new javax.swing.JLabel();
         jPanel1 = new javax.swing.JPanel();
+        btnborrar = new javax.swing.JButton();
+        btn_prompt = new javax.swing.JButton();
         jLabel2 = new javax.swing.JLabel();
         btnhistorial = new javax.swing.JButton();
-        btnborrar = new javax.swing.JButton();
         btneliminar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Ollama IA");
         setCursor(new java.awt.Cursor(java.awt.Cursor.DEFAULT_CURSOR));
 
-        jLabel1.setFont(new java.awt.Font("Segoe UI", 0, 18)); // NOI18N
+        jLabel1.setFont(new java.awt.Font("Comic Sans MS", 2, 18)); // NOI18N
         jLabel1.setText("Ollama Chatbot");
-
-        btn_prompt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/send-message.png"))); // NOI18N
-        btn_prompt.setText("Enviar");
-        btn_prompt.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btn_promptMouseClicked(evt);
-            }
-        });
-        btn_prompt.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btn_promptActionPerformed(evt);
-            }
-        });
 
         jScrollPane1.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyPressed(java.awt.event.KeyEvent evt) {
@@ -123,21 +122,54 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
-        jLabel4.setFont(new java.awt.Font("Britannic Bold", 3, 15)); // NOI18N
-        jLabel4.setText("Historial");
-
         jPanel1.setForeground(new java.awt.Color(82, 105, 203));
         jPanel1.setToolTipText("");
+
+        btnborrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/data-cleaning.png"))); // NOI18N
+        btnborrar.setText("Limpiar");
+        btnborrar.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btnborrarMouseClicked(evt);
+            }
+        });
+        btnborrar.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btnborrarActionPerformed(evt);
+            }
+        });
+
+        btn_prompt.setIcon(new javax.swing.ImageIcon(getClass().getResource("/send-message.png"))); // NOI18N
+        btn_prompt.setText("Enviar");
+        btn_prompt.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btn_promptMouseClicked(evt);
+            }
+        });
+        btn_prompt.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btn_promptActionPerformed(evt);
+            }
+        });
 
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 17, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                    .addComponent(btn_prompt, javax.swing.GroupLayout.DEFAULT_SIZE, 111, Short.MAX_VALUE)
+                    .addComponent(btnborrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGap(0, 0, Short.MAX_VALUE)
+            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
+                .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btnborrar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(btn_prompt)
+                .addContainerGap())
         );
 
         jLabel2.setIcon(new javax.swing.ImageIcon(getClass().getResource("/history.png"))); // NOI18N
@@ -152,19 +184,6 @@ public class GUI extends javax.swing.JFrame {
         btnhistorial.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 btnhistorialActionPerformed(evt);
-            }
-        });
-
-        btnborrar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/data-cleaning.png"))); // NOI18N
-        btnborrar.setText("Limpiar chat");
-        btnborrar.addMouseListener(new java.awt.event.MouseAdapter() {
-            public void mouseClicked(java.awt.event.MouseEvent evt) {
-                btnborrarMouseClicked(evt);
-            }
-        });
-        btnborrar.addActionListener(new java.awt.event.ActionListener() {
-            public void actionPerformed(java.awt.event.ActionEvent evt) {
-                btnborrarActionPerformed(evt);
             }
         });
 
@@ -188,66 +207,57 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(layout.createSequentialGroup()
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addGap(14, 14, 14)
-                        .addComponent(jLabel4, javax.swing.GroupLayout.PREFERRED_SIZE, 92, javax.swing.GroupLayout.PREFERRED_SIZE))
-                    .addGroup(layout.createSequentialGroup()
-                        .addGap(34, 34, 34)
-                        .addComponent(jLabel2))
-                    .addGroup(layout.createSequentialGroup()
                         .addContainerGap()
-                        .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 90, javax.swing.GroupLayout.PREFERRED_SIZE)))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                        .addComponent(jLabel1)
-                        .addGap(243, 243, 243))
-                    .addGroup(layout.createSequentialGroup()
                         .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 566, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 0, Short.MAX_VALUE)
                             .addGroup(layout.createSequentialGroup()
-                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING, false)
-                                    .addComponent(btnborrar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, 130, Short.MAX_VALUE)
-                                    .addComponent(terminar, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-                                    .addComponent(btnhistorial, javax.swing.GroupLayout.Alignment.LEADING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
-                                .addGap(24, 24, 24)
-                                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 289, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                                .addComponent(btn_prompt, javax.swing.GroupLayout.PREFERRED_SIZE, 111, javax.swing.GroupLayout.PREFERRED_SIZE))
-                            .addComponent(btneliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 145, javax.swing.GroupLayout.PREFERRED_SIZE))
-                        .addGap(18, 18, 18)))
+                                .addComponent(jLabel2)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 64, Short.MAX_VALUE)))
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING, false)
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(36, 36, 36)
+                                        .addComponent(btneliminar)
+                                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                        .addComponent(jScrollPane1))
+                                    .addGroup(layout.createSequentialGroup()
+                                        .addGap(18, 18, 18)
+                                        .addComponent(jScrollPane4, javax.swing.GroupLayout.DEFAULT_SIZE, 836, Short.MAX_VALUE)))
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
+                            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 473, Short.MAX_VALUE)
+                                .addComponent(jLabel1)
+                                .addGap(260, 260, 260))))
+                    .addGroup(layout.createSequentialGroup()
+                        .addComponent(btnhistorial)
+                        .addGap(18, 18, 18)
+                        .addComponent(terminar, javax.swing.GroupLayout.PREFERRED_SIZE, 130, javax.swing.GroupLayout.PREFERRED_SIZE)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
                 .addComponent(jPanel1, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
         layout.setVerticalGroup(
             layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(0, 51, Short.MAX_VALUE)
-                .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jLabel4)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
-                .addComponent(jScrollPane2, javax.swing.GroupLayout.PREFERRED_SIZE, 575, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addGap(40, 40, 40))
             .addComponent(jPanel1, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
-                .addGap(16, 16, 16)
-                .addComponent(jLabel1)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addComponent(jScrollPane4, javax.swing.GroupLayout.PREFERRED_SIZE, 541, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                    .addGroup(layout.createSequentialGroup()
-                        .addComponent(terminar)
-                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
-                            .addComponent(btn_prompt)
-                            .addGroup(layout.createSequentialGroup()
-                                .addComponent(btnhistorial, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
-                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
-                                .addComponent(btnborrar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 57, javax.swing.GroupLayout.PREFERRED_SIZE))
+            .addGroup(layout.createSequentialGroup()
                 .addGap(11, 11, 11)
-                .addComponent(btneliminar)
-                .addGap(0, 0, Short.MAX_VALUE))
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jLabel1)
+                    .addComponent(jLabel2, javax.swing.GroupLayout.PREFERRED_SIZE, 32, javax.swing.GroupLayout.PREFERRED_SIZE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(btnhistorial, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(terminar))
+                .addGap(18, 18, 18)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(jScrollPane2, javax.swing.GroupLayout.DEFAULT_SIZE, 384, Short.MAX_VALUE)
+                    .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, layout.createSequentialGroup()
+                        .addComponent(jScrollPane4)
+                        .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                            .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                            .addComponent(btneliminar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE))))
+                .addContainerGap())
         );
 
         pack();
@@ -264,8 +274,7 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_promptMouseClicked
 
     private void chatsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chatsMouseClicked
-
-
+   
     }//GEN-LAST:event_chatsMouseClicked
 
     private void terminarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_terminarActionPerformed
@@ -277,59 +286,59 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_promptActionPerformed
 
     private void terminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_terminarMouseClicked
-     
-String churro = output.getText();
 
-int i = 0;
-while (i < chats2.length && chats2[i] != null) {
-    i++;
-}
-if (i < chats2.length) {
-    chats2[i] = churro;
-}
+        
 
-String name = JOptionPane.showInputDialog(null, "Ingrese nombre del nuevo chat", "Guardar chat", JOptionPane.INFORMATION_MESSAGE);
-if (name == null || name.trim().isEmpty()) {
-    JOptionPane.showMessageDialog(null, "No se ingresó un nombre válido para el chat.", "Error", JOptionPane.WARNING_MESSAGE);
-    return;
-}
+        int i = 0;
+        while (i < chats2.length && chats2[i] != null) {
+            i++;
+        }
+        
 
-boolean guardado = false;
+        String name = JOptionPane.showInputDialog(null, "Ingrese nombre del nuevo chat", "Guardar chat", JOptionPane.INFORMATION_MESSAGE);
+        if (name == null || name.trim().isEmpty()) {
+            JOptionPane.showMessageDialog(null, "No se ingresó un nombre válido para el chat.", "Error", JOptionPane.WARNING_MESSAGE);
+            return;
+        }
 
-for (i = 0; i < chats2.length; i++) {
-    if (chats2[i] == null) {
-        chats2[i] = name;
-        guardado = true;
-        break;
-    }
-}
+        boolean guardado = false;
 
-for (i = 0; i < datos.length; i++) {
-    if (datos[i][0] == null) {
-        datos[i][0] = name;
-        break;
-    }
-}
+        for (i = 0; i < chats2.length; i++) {
+            if (chats2[i] == null) {
+                chats2[i] = name;
+                guardado = true;
+                break;
+            }
+        }
 
-if (guardado) {
-    chats.setListData(chats2);
-} else {
-    JOptionPane.showMessageDialog(null, "No creado, ingrese nombre del chat (1 palabra)", "Información", JOptionPane.WARNING_MESSAGE);
-}
+        for (i = 0; i < datos.length; i++) {
+            if (datos[i][0] == null) {
+                datos[i][0] = name;
+                break;
+            }
+        }
+
+        if (guardado) {
+            chats.setListData(chats2);
+        } else {
+            JOptionPane.showMessageDialog(null, "No creado, ingrese nombre del chat (1 palabra)", "Información", JOptionPane.WARNING_MESSAGE);
+        }
 
     }//GEN-LAST:event_terminarMouseClicked
 
     private void jScrollPane1KeyPressed(java.awt.event.KeyEvent evt) {//GEN-FIRST:event_jScrollPane1KeyPressed
+
         if (evt.getKeyCode() == KeyEvent.VK_ENTER) {
             if (evt.isShiftDown()) {
-                // Shift + Enter: Inserta un salto de línea
-                output.append("\n");
+                // Shift + Enter: Inserta un salto de línea en el prompt
+                prompt.setText(prompt.getText() + "\n");
             } else {
                 // Enter: Envía el prompt
                 evt.consume(); // Previene el salto de línea
                 prompt();
             }
         }
+
     }//GEN-LAST:event_jScrollPane1KeyPressed
 
     private void btnhistorialMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnhistorialMouseClicked
@@ -411,7 +420,6 @@ if (guardado) {
     public javax.swing.JList<String> chats;
     private javax.swing.JLabel jLabel1;
     private javax.swing.JLabel jLabel2;
-    private javax.swing.JLabel jLabel4;
     private javax.swing.JPanel jPanel1;
     private javax.swing.JScrollPane jScrollPane1;
     private javax.swing.JScrollPane jScrollPane2;
@@ -430,8 +438,8 @@ public static String ollama(String nombremodelo, String promptText) {
             conn.setDoOutput(true);
 
             String jsonInputString = String.format(
-                    "{\"model\": \"%s\", \"prompt\": \"Por favor, responde siempre en español. %s\", \"stream\": false}", nombremodelo, promptText
-            );
+                    "{\"model\": \"%s\", \"prompt\": \"Por favor, responde siempre en español. %s\", \"stream\": false}",
+                    nombremodelo, promptText);
 
             // Enviar la solicitud
             try ( OutputStream os = conn.getOutputStream()) {
@@ -441,10 +449,12 @@ public static String ollama(String nombremodelo, String promptText) {
 
             // Obtener el código de respuesta
             int code = conn.getResponseCode();
-            if (code == 404) {
-                return "Error 404: El recurso solicitado no fue encontrado. Verifica el endpoint y el servidor.";
+            String errorMessage = errorHandler(code);
+            if (errorMessage != null) {
+                return errorMessage;
             } else {
-                BufferedReader in = new BufferedReader(new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
+                BufferedReader in = new BufferedReader(
+                        new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                 StringBuilder response = new StringBuilder();
                 String line;
                 while ((line = in.readLine()) != null) {
@@ -464,6 +474,26 @@ public static String ollama(String nombremodelo, String promptText) {
             return "La URL es inválida: " + e.getMessage();
         } catch (IOException e) {
             return "Error de conexión: " + e.getMessage();
+        }
+    }
+
+    private static String errorHandler(int code) {
+        switch (code) {
+            case 400:
+                return "Error 400: Solicitud incorrecta. No terminar Prompt con tecla (Enter).";
+            case 401:
+                return "Error 401: No autorizado. Verifica tus credenciales de autenticación.";
+            case 403:
+                return "Error 403: Prohibido. No tienes permiso para acceder a este recurso.";
+            case 404:
+                return "Error 404: El recurso solicitado no fue encontrado. Verifica el endpoint y el servidor.";
+            case 500:
+                return "Error 500: Error interno del servidor. Intenta nuevamente más tarde.";
+            case 503:
+                return "Error 503: Servicio no disponible. El servidor podría estar en mantenimiento.";
+            // Añade más casos según sea necesario
+            default:
+                return null; // No hay error conocido, la solicitud fue exitosa
         }
     }
 
