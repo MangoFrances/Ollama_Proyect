@@ -242,39 +242,43 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btn_promptActionPerformed
 
     private void terminarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_terminarMouseClicked
-        String churro = output.getText();
-        int i = 0;
-        chats2[i] = churro;
-        i++;
+String churro = output.getText();
+int i = 0;
+while (i < chats2.length && chats2[i] != null) {
+    i++;
+}
+if (i < chats2.length) {
+    chats2[i] = churro;
+}
 
-        String name = JOptionPane.showInputDialog("Ingese nombre del nuevo chat", JOptionPane.INFORMATION_MESSAGE);
-        boolean vacio = false;
-        boolean vacio2 = false;
-        boolean nada = true;
-        int index;
-        for (i = 0; i < 1000; i++) {
-            if (chats2[i] == null) {
-                chats2[i] = name;
-                vacio = true;
-                index = 1;
-                break;
-            }
-            if (datos[i][0] == null) {
-                datos[i][0] = name;
-                vacio2 = true;
-                break;
-            }
-        }
-        if (vacio) {
-            chats.setListData(chats2);
-        } else {
-            nada = false;
-            JOptionPane.showMessageDialog(null, "No creado, ingrese nombre del chat (1 palabra)", "Información", JOptionPane.WARNING_MESSAGE);
-        }
-        if (nada) {
-            output.setText("");
-        }
+String name = JOptionPane.showInputDialog(null, "Ingrese nombre del nuevo chat", "Guardar chat", JOptionPane.INFORMATION_MESSAGE);
+if (name == null || name.trim().isEmpty()) {
+    JOptionPane.showMessageDialog(null, "No se ingresó un nombre válido para el chat.", "Error", JOptionPane.WARNING_MESSAGE);
+    return;
+}
 
+boolean guardado = false;
+
+for (i = 0; i < chats2.length; i++) {
+    if (chats2[i] == null) {
+        chats2[i] = name;
+        guardado = true;
+        break;
+    }
+}
+
+for (i = 0; i < datos.length; i++) {
+    if (datos[i][0] == null) {
+        datos[i][0] = name;
+        break;
+    }
+}
+
+if (guardado) {
+    chats.setListData(chats2);
+} else {
+    JOptionPane.showMessageDialog(null, "No creado, ingrese nombre del chat (1 palabra)", "Información", JOptionPane.WARNING_MESSAGE);
+}
 
     }//GEN-LAST:event_terminarMouseClicked
 
