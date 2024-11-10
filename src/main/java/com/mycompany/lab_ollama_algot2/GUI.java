@@ -8,6 +8,7 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
+import java.net.SocketTimeoutException;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
@@ -30,27 +31,31 @@ public class GUI extends javax.swing.JFrame {
         for (int i = 0; i < 20; i++) {
             datos.add(new ArrayList<>());
         }
-        jScrollPane1.addKeyListener(new java.awt.event.KeyAdapter() {
-            public void keyPressed(java.awt.event.KeyEvent evt) {
-                jScrollPane1KeyPressed(evt);
-            }
-        });
+
         prompt.addKeyListener(new KeyAdapter() {
             @Override
             public void keyPressed(KeyEvent e) {
                 if (e.getKeyCode() == KeyEvent.VK_ENTER) {
-                    prompt();
+                    if (e.isShiftDown()) {
+                        // Shift + Enter: Añadir salto de línea sin enviar el mensaje
+                        prompt.setText(prompt.getText() + "\n");
+                        e.consume(); // Evitar que se interprete como un envío
+                    } else {
+                        // Enter sin Shift: Envía el mensaje
+                        e.consume(); // Previene el salto de línea en el JTextPane
+                        prompt();    // Envía el mensaje
+                    }
                 }
             }
         });
     }
 
     private void prompt() {
-        String texto = prompt.getText();
-        if (!texto.trim().isEmpty()) {
+        String texto = prompt.getText().trim(); // Toca usar una variable para limpiar espacios sera erroneo si lo hacemos directo en el IF
+        if (!texto.isEmpty()) {
             output.append("Usuario: " + texto + "\n");
 
-            String entrada = prompt.getText();
+            String entrada = texto;
             String milagro = (ollama(nombremodelo, entrada) + "\n");
 
             output.append("Respuesta: " + milagro + "\n");
@@ -60,11 +65,9 @@ public class GUI extends javax.swing.JFrame {
             if (index != -1) {
                 datos.get(index).add("Usuario: " + entrada);
                 datos.get(index).add("Respuesta: " + milagro);
-                 System.out.println("Mensajes almacenados en el chat " + index + ": " + datos.get(index));//Prueba ddebug
+                System.out.println("Mensajes almacenados en el chat " + index + ": " + datos.get(index)); // Prueba debug
             }
         }
-        
-        
     }
 
     public void rescatavectorinador(String v[]) {
@@ -268,14 +271,13 @@ public class GUI extends javax.swing.JFrame {
     private void btn_promptMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btn_promptMouseClicked
         prompt();
 
-        
 
     }//GEN-LAST:event_btn_promptMouseClicked
 
     private void chatsMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_chatsMouseClicked
         int index = chats.getSelectedIndex();
         if (index != -1) {
-            output.setText(""); 
+            output.setText("");
 
             // Obtiene el historial completo del chat seleccionado desde `datos`
             ArrayList<String> conversation = datos.get(index);
@@ -286,7 +288,6 @@ public class GUI extends javax.swing.JFrame {
                 conversationText.append(mensaje).append("\n");
             }
 
-           
             output.setText(conversationText.toString());
         }
 
@@ -441,6 +442,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton terminar;
     // End of variables declaration//GEN-END:variables
 public static String ollama(String nombremodelo, String promptText) {
+        double inicio = System.currentTimeMillis(); // Marca de tiempo de inicio
         try {
             URL url = new URL("http://localhost:11434/api/generate");
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
@@ -449,22 +451,25 @@ public static String ollama(String nombremodelo, String promptText) {
             conn.setRequestProperty("Accept", "application/json");
             conn.setDoOutput(true);
 
+            // Configura tiempos de espera para conexión y lectura
+            conn.setConnectTimeout(40000); // Tiempo de espera para conectar (5 segundos)
+            conn.setReadTimeout(40000); // Tiempo de espera para leer datos (5 segundos)
+
             String jsonInputString = String.format(
                     "{\"model\": \"%s\", \"prompt\": \"Por favor, responde siempre en español. %s\", \"stream\": false}",
                     nombremodelo, promptText);
 
-            // Enviar la solicitud
             try ( OutputStream os = conn.getOutputStream()) {
                 byte[] input = jsonInputString.getBytes(StandardCharsets.UTF_8);
                 os.write(input, 0, input.length);
             }
 
-            // Obtener el código de respuesta
             int code = conn.getResponseCode();
             String errorMessage = errorHandler(code);
             if (errorMessage != null) {
                 return errorMessage;
             } else {
+
                 BufferedReader in = new BufferedReader(
                         new InputStreamReader(conn.getInputStream(), StandardCharsets.UTF_8));
                 StringBuilder response = new StringBuilder();
@@ -474,14 +479,23 @@ public static String ollama(String nombremodelo, String promptText) {
                 }
                 in.close();
 
-                // Extraer el contenido de la respuesta JSON
                 JSONObject jsonResponse = new JSONObject(response.toString());
                 String responseText = jsonResponse.getString("response");
+                // Configuramos `setConnectTimeout` y `setReadTimeout` para limitar automáticamente el tiempo de espera 
+                // en la conexión y lectura, lanzando `SocketTimeoutException` si se excede el límite. Además, medimos el 
+                // tiempo total de ejecución con `System.currentTimeMillis()` para monitorear el rendimiento global de la operación.
 
+                // double fin = System.currentTimeMillis(); 
+                // double tiempoTotal = fin - inicio;
+                //if (tiempoTotal > 5000) { // 5000 milisegundos = 5 segundos
+                //return "Error: Tiempo de respuesta excedido. Tiempo total: " + tiempoTotal + " ms";
+                // }
                 // Devolver la respuesta
-                return responseText;
+                return "Exitoso: " + responseText;
             }
 
+        } catch (SocketTimeoutException e) {
+            return "Error: Tiempo de espera de conexión o lectura excedido";
         } catch (MalformedURLException e) {
             return "La URL es inválida: " + e.getMessage();
         } catch (IOException e) {
@@ -492,7 +506,7 @@ public static String ollama(String nombremodelo, String promptText) {
     private static String errorHandler(int code) {
         switch (code) {
             case 400:
-                return "Error 400: Solicitud incorrecta. No terminar Prompt con tecla (Enter).";
+                return "Error 400: Solicitud incorrecta. No terminar o empezar Prompt con tecla (Enter o Espacio).";
             case 401:
                 return "Error 401: No autorizado. Verifica tus credenciales de autenticación.";
             case 403:
@@ -503,9 +517,8 @@ public static String ollama(String nombremodelo, String promptText) {
                 return "Error 500: Error interno del servidor. Intenta nuevamente más tarde.";
             case 503:
                 return "Error 503: Servicio no disponible. El servidor podría estar en mantenimiento.";
-            // Añade más casos según sea necesario
             default:
-                return null; // No hay error conocido, la solicitud fue exitosa
+                return null;
         }
     }
 
@@ -517,7 +530,7 @@ public static String ollama(String nombremodelo, String promptText) {
         int index = findChatIndexByName(chatName);
         if (index != -1) {
             StringBuilder conversation = new StringBuilder();
-            for (String mensaje : datos.get(index)) { // Itera sobre los mensajes del chat seleccionado
+            for (String mensaje : datos.get(index)) {
                 if (mensaje != null) {
                     conversation.append(mensaje).append("\n");
                 }
@@ -528,7 +541,7 @@ public static String ollama(String nombremodelo, String promptText) {
     }
 
     private int findChatIndexByName(String chatName) {
-        for (int i = 0; i < chats2.length; i++) { // Busca el índice en `chats2` que corresponde al nombre del chat
+        for (int i = 0; i < chats2.length; i++) {
             if (chatName.equals(chats2[i])) {
                 return i;
             }
