@@ -23,6 +23,8 @@ public class GUI extends javax.swing.JFrame {
 
     ArrayList<ArrayList<String>> datos = new ArrayList<>(20);
     GUI2 historial = new GUI2();
+    GUI3 game = new GUI3();
+    
 
     private static final String DB_URL = "jdbc:sqlite:chatbot.db";
 
@@ -91,6 +93,7 @@ public class GUI extends javax.swing.JFrame {
         btnborrar = new javax.swing.JButton();
         btn_prompt = new javax.swing.JButton();
         btnhistorial = new javax.swing.JButton();
+        btngame = new javax.swing.JButton();
         btneliminar = new javax.swing.JButton();
         jLabel3 = new javax.swing.JLabel();
 
@@ -174,6 +177,19 @@ public class GUI extends javax.swing.JFrame {
             }
         });
 
+        btngame.setIcon(new javax.swing.ImageIcon(getClass().getResource("/history.png"))); // NOI18N
+        btngame.setText("Open Game");
+        btngame.addMouseListener(new java.awt.event.MouseAdapter() {
+            public void mouseClicked(java.awt.event.MouseEvent evt) {
+                btngameMouseClicked(evt);
+            }
+        });
+        btngame.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                btngameActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
@@ -181,16 +197,17 @@ public class GUI extends javax.swing.JFrame {
             .addGroup(jPanel1Layout.createSequentialGroup()
                 .addContainerGap()
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                    .addComponent(btnhistorial, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                    .addComponent(btngame, javax.swing.GroupLayout.Alignment.TRAILING, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btnborrar, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
                     .addComponent(btn_prompt, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)))
-            .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
-                .addGap(0, 4, Short.MAX_VALUE)
-                .addComponent(btnhistorial))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(javax.swing.GroupLayout.Alignment.TRAILING, jPanel1Layout.createSequentialGroup()
                 .addContainerGap(javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
+                .addComponent(btngame)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
                 .addComponent(btnhistorial, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(btnborrar, javax.swing.GroupLayout.PREFERRED_SIZE, 23, javax.swing.GroupLayout.PREFERRED_SIZE)
@@ -237,7 +254,7 @@ public class GUI extends javax.swing.JFrame {
                         .addComponent(btneliminar)
                         .addGap(248, 248, 248)
                         .addComponent(jLabel3)
-                        .addGap(0, 263, Short.MAX_VALUE)))
+                        .addGap(0, 228, Short.MAX_VALUE)))
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(jPanel1, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE))
         );
@@ -394,6 +411,17 @@ public class GUI extends javax.swing.JFrame {
         // TODO add your handling code here:
     }//GEN-LAST:event_btneliminarActionPerformed
 
+    private void btngameActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btngameActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_btngameActionPerformed
+
+    private void btngameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btngameMouseClicked
+        this.setVisible(false); 
+        //GUI3 game = new GUI3(this);
+        game.setVisible(true); 
+
+    }//GEN-LAST:event_btngameMouseClicked
+
     public static void main(String args[]) {
         /* Set the Nimbus look and feel */
         //<editor-fold defaultstate="collapsed" desc=" Look and feel setting code (optional) ">
@@ -430,6 +458,7 @@ public class GUI extends javax.swing.JFrame {
     private javax.swing.JButton btn_prompt;
     private javax.swing.JButton btnborrar;
     private javax.swing.JButton btneliminar;
+    private javax.swing.JButton btngame;
     private javax.swing.JButton btnhistorial;
     public javax.swing.JList<String> chats;
     private javax.swing.JLabel jLabel3;
