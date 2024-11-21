@@ -23,7 +23,7 @@ public class GUI extends javax.swing.JFrame {
 
     ArrayList<ArrayList<String>> datos = new ArrayList<>(20);
     GUI2 historial = new GUI2();
-    GUI3 game = new GUI3();
+    
     
 
     private static final String DB_URL = "jdbc:sqlite:chatbot.db";
@@ -416,9 +416,9 @@ public class GUI extends javax.swing.JFrame {
     }//GEN-LAST:event_btngameActionPerformed
 
     private void btngameMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btngameMouseClicked
-        this.setVisible(false); 
+        //this.setVisible(false); 
         //GUI3 game = new GUI3(this);
-        game.setVisible(true); 
+        //game.setVisible(true); 
 
     }//GEN-LAST:event_btngameMouseClicked
 

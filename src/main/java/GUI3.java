@@ -109,9 +109,9 @@ public class GUI3 extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void btnregresarMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_btnregresarMouseClicked
-        this.dispose();
-        GUI g = new GUI();
-        g.setVisible(true);
+      //  this.dispose();
+       // GUI g = new GUI();
+       // g.setVisible(true);
     }//GEN-LAST:event_btnregresarMouseClicked
 
     private void btnregresarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnregresarActionPerformed
